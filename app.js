@@ -1,18 +1,23 @@
 
+const express = require('express');
+const mustacheExpress = require('mustache-express');
 const models = require('./models');
 
-// models.Movie.create({
-//   title: "Home Alone 2: Lost in New York",
-//   release_date: new Date(1997, 5, 12),
-//   imdb_link: "www.daggerarcadia.tumblr.com"
-// });
+const app = express();
 
-//searches in the database. find one will always return a row from database where the title is The Fountain.
-models.Movie.findOne({
-  where: {
-    title: "The Fountain"
-  }
-  //this is a promise
-}).then(function(movie){
-  console.log(movie.release_date); //model definition (table) should have a capital letter, the row in the Movie table makes the movie lowercase.
+app.engine('mustache', mustacheExpress());
+app.set('view engine', 'mustache');
+app.set('views', './views');
+
+
+app.get('/', function(req, res){
+
+//findAll returns an array so we need to loop over it
+  models.Movie.findAll().then(function(movies){
+    res.render('index', {model: movies});
+  });
+
+
 });
+
+app.listen(3000);
